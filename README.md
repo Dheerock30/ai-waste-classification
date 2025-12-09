@@ -7,154 +7,148 @@ This project is a simple AI prototype that classifies waste images into two clas
 
 The model is trained in Python using TensorFlow/Keras and served as a web app using Streamlit. Users can upload a photo of waste and get a predicted class plus a suggested bin.
 
----
+***
 
 ## 1. Project Structure
 
+```text
 ai-waste-classification/
-├── app.py # Streamlit web app
-├── train_model.py # Training script
-├── ai_waste_classification_model.keras # Saved Keras model
-├── requirements.txt # Python dependencies
+├── app.py                           # Streamlit web app
+├── train_model.py                   # Training script
+├── ai_waste_classification_model.keras  # Saved Keras model
+├── requirements.txt                 # Python dependencies
 └── data/
-├── train/
-│ ├── O/ # Organic training images
-│ └── R/ # Recyclable training images
-└── val/
-├── O/ # Organic validation images
-└── R/ # Recyclable validation images
+    ├── train/
+    │   ├── O/                       # Organic training images
+    │   └── R/                       # Recyclable training images
+    └── val/
+        ├── O/                       # Organic validation images
+        └── R/                       # Recyclable validation images
+The dataset is organized into two folders (O and R) under both train and val.
+
+2. Prerequisites
+Python 3.11 or newer
+
+pip (Python package manager)
+
+(Optional) Git and a GitHub account, if you want to contribute or deploy
+
+3. Installation
+Clone this repository
 
 
-> The dataset is organized into two folders (`O` and `R`) under both `train` and `val`.
-
----
-
-## 2. Prerequisites
-
-- Python 3.11 or newer  
-- `pip` (Python package manager)  
-- (Optional) Git and a GitHub account, if you want to contribute or deploy
-
----
-
-## 3. Installation
-
-1. **Clone this repository**
-
+bash
 git clone https://github.com/<your-username>/ai-waste-classification.git
 cd ai-waste-classification
+Create and activate a virtual environment (recommended)
 
 
-2. **Create and activate a virtual environment (recommended)**
-
+bash
 python -m venv .venv
 
-Windows
+# Windows
 .venv\Scripts\activate
 
-macOS / Linux
-source .venv/bin/activate
+# macOS / Linux
+# source .venv/bin/activate
+Install dependencies
 
 
-3. **Install dependencies**
-
+bash
 pip install -r requirements.txt
+4. Dataset Setup
+The model expects a folder called data with the following structure:
 
 
----
-
-## 4. Dataset Setup
-
-The model expects a folder called `data` with the following structure:
-
+text
 data/
 ├── train/
-│ ├── O/ # Organic training images
-│ └── R/ # Recyclable training images
+│   ├── O/    # Organic training images
+│   └── R/    # Recyclable training images
 └── val/
-├── O/ # Organic validation images
-└── R/ # Recyclable validation images
+    ├── O/    # Organic validation images
+    └── R/    # Recyclable validation images
+O contains images of organic waste (food scraps, fruits, vegetables, etc.).
 
-
-- `O` contains images of **organic waste** (food scraps, fruits, vegetables, etc.).  
-- `R` contains images of **recyclable waste** (plastic, metal, glass, paper, etc.).
+R contains images of recyclable waste (plastic, metal, glass, paper, etc.).
 
 Steps:
 
-1. Create the folders exactly as shown above.  
-2. Place training images into `data/train/O` and `data/train/R`.  
-3. Place validation images into `data/val/O` and `data/val/R`.  
-4. The class names are taken automatically from these folder names (`O` and `R`).
+Create the folders exactly as shown above.
 
----
+Place training images into data/train/O and data/train/R.
 
-## 5. Training the Model
+Place validation images into data/val/O and data/val/R.
 
-If you want to train or retrain the model, use `train_model.py`.
+The class names are taken automatically from these folder names (O and R).
 
-1. Ensure your dataset is prepared under `data/train` and `data/val`.  
-2. Run:
+5. Training the Model
+If you want to train or retrain the model, use train_model.py.
 
+Ensure your dataset is prepared under data/train and data/val.
+
+Run:
+
+
+bash
 python train_model.py
+What train_model.py does:
+
+Loads images from data/train and data/val.
+
+Applies basic data augmentation (random flip, rotation, zoom).
+
+Uses MobileNetV2 as a base model (transfer learning from ImageNet).
+
+Adds a small classification head for 2 classes (O, R).
+
+Trains for a configured number of epochs.
+
+Saves the trained model as:
 
 
-What `train_model.py` does:
-
-- Loads images from `data/train` and `data/val`.  
-- Applies basic data augmentation (random flip, rotation, zoom).  
-- Uses **MobileNetV2** as a base model (transfer learning from ImageNet).  
-- Adds a small classification head for 2 classes (`O`, `R`).  
-- Trains for a configured number of epochs.  
-- Saves the trained model as:
-
+text
 ai_waste_classification_model.keras
-
-
 If the file already exists, it will be overwritten with the new trained model.
 
-You can adjust training settings (e.g., number of epochs) inside `train_model.py`.
+You can adjust training settings (for example, number of epochs) inside train_model.py.
 
----
+6. Running the Web App Locally
+The Streamlit app (app.py) loads the saved model and provides a browser interface.
 
-## 6. Running the Web App Locally
+Make sure ai_waste_classification_model.keras is present in the project root (generated by train_model.py or downloaded).
 
-The Streamlit app (`app.py`) loads the saved model and provides a browser interface.
+Start the app:
 
-1. Make sure `ai_waste_classification_model.keras` is present in the project root (generated by `train_model.py` or downloaded).  
-2. Start the app:
 
+bash
 streamlit run app.py
+Open the URL shown in the terminal (usually http://localhost:8501) if it does not open automatically.
 
+Inside the app:
 
-3. Open the URL shown in the terminal (usually `http://localhost:8501`) if it does not open automatically.
+Upload an image of waste (JPG/PNG).
 
-4. Inside the app:
+Click “Classify”.
 
-- Upload an image of waste (JPG/PNG).  
-- Click **“Classify”**.  
-- The app displays:
-  - Predicted class: **“Organic waste”** or **“Recyclable waste”**  
-  - Model confidence (percentage)  
-  - Suggested bin: **“Wet / Organic bin”** or **“Dry / Recyclables bin”**
+The app displays:
 
----
+Predicted class: “Organic waste” or “Recyclable waste”
 
-## 7. Code Overview
+Model confidence (percentage)
 
-### `train_model.py`
+Suggested bin: “Wet / Organic bin” or “Dry / Recyclables bin”
 
+7. Code Overview
+train_model.py
 High‑level steps:
 
-- Define image size and batch size.  
-- Load training and validation datasets from `data/`.  
-- Apply data augmentation.  
-- Build a model:
+Define image size and batch size.
 
-- Base: `MobileNetV2` with ImageNet weights (frozen initially).  
-- Global average pooling layer.  
-- Dropout layer.  
-- Dense layer with 2 outputs and softmax activation.
+Load training and validation datasets from data/ using image_dataset_from_directory.
 
-- Compile with Adam optimizer and `sparse_categorical_crossentropy` loss.  
-- Train for several epochs.  
-- Save the model to
+Apply data augmentation to reduce overfitting.
+
+Build a model:
+
+Base: `MobileNetV2
